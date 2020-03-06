@@ -83,7 +83,9 @@ module.exports = {
     config
       // https://webpack.js.org/configuration/devtool/#development
       .when(process.env.NODE_ENV === 'development',
-        config => config.devtool('cheap-source-map')
+        // config => config.devtool('cheap-source-map')//隐藏源码
+        config => config.devtool('source-map')// 可直观看源码
+        // config => config.devtool('eval')//构建速度比较快且隐藏源码
       )
 
     config

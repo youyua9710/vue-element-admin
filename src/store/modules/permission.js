@@ -6,10 +6,11 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param route
  */
 function hasPermission(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role))
-  } else {
-    return true
+  if (route.meta && route.meta.roles) { // 权限判断，1判断是否有meta，2
+    return roles.some(role => route.meta.roles.includes(role)) // some命中一条就为true，
+    // 遍历用户的role['editor','ccc','aaa']  跟router中的roles['admin']是否有包含关系
+  } else { // 如果没有meta或者没有roles
+    return true // true视为有访问权限
   }
 }
 
@@ -22,7 +23,7 @@ export function filterAsyncRoutes(routes, roles) {
   const res = []
 
   routes.forEach(route => {
-    const tmp = { ...route }
+    const tmp = { ...route }// 浅拷贝到一个tmp，然后做是否具有权限判断
     if (hasPermission(roles, tmp)) {
       if (tmp.children) {
         tmp.children = filterAsyncRoutes(tmp.children, roles)
@@ -49,8 +50,9 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
+      // debugger
       let accessedRoutes
-      if (roles.includes('admin')) {
+      if (roles.includes('admin')) { // 如果是包含admin ，全部动态路由可见
         accessedRoutes = asyncRoutes || []
       } else {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
